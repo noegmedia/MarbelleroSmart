@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Marbella Hotel TV</title>
+    <style>
+        /* --- AQUÍ ESTÁ EL CSS --- */
+        :root { --azul: #00aaff; --oscuro: #0055ff; }
+        body { font-family: sans-serif; background: white; margin: 0; }
+        
+        header { 
+            display: flex; justify-content: space-between; 
+            padding: 20px 50px; border-bottom: 4px solid var(--azul);
+        }
+
+        .main-menu { 
+            display: grid; grid-template-columns: repeat(4, 1fr); 
+            gap: 20px; padding: 50px; 
+        }
+
+        .card {
+            background: var(--azul); color: white; padding: 40px;
+            border-radius: 15px; text-align: center; cursor: pointer;
+            transition: 0.3s; border: 5px solid transparent;
+        }
+
+        /* Efecto para el mando de la TV */
+        .card:focus { 
+            transform: scale(1.1); background: var(--oscuro); 
+            border-color: gold; outline: none; 
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div id="logo"><h1>MARBELLA TV</h1></div>
+        <div id="info">
+            <span id="reloj">00:00</span> | <span id="clima">--°C</span>
+        </div>
+    </header>
+
+    <div class="main-menu" id="menu">
+        <div class="card" tabindex="0" onclick="abrir('noticias')">NOTICIAS</div>
+        <div class="card" tabindex="0" onclick="abrir('tv')">TV DIRECTO</div>
+        <div class="card" tabindex="0" onclick="abrir('deportes')">DEPORTES</div>
+        <div class="card" tabindex="0" onclick="abrir('eventos')">EVENTOS</div>
+    </div>
+
+    <script>
+        /* --- AQUÍ ESTÁ EL JS --- */
+        
+        // 1. Reloj
+        setInterval(() => {
+            document.getElementById('reloj').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        // 2. Navegación por mando (Flechas)
+        document.addEventListener('keydown', (e) => {
+            const cards = document.querySelectorAll('.card');
+            let idx = Array.from(cards).indexOf(document.activeElement);
+            
+            if (e.key === "ArrowRight") idx = (idx + 1) % cards.length;
+            if (e.key === "ArrowLeft") idx = (idx - 1 + cards.length) % cards.length;
+            if (e.key === "Enter") document.activeElement.click();
+            
+            if(cards[idx]) cards[idx].focus();
+        });
+
+        // 3. Conexión Excel (Lógica MarbellerosTV)
+        async function cargarExcel() {
+            const URL = "TU_URL_DE_GOOGLE_SHEETS_CSV";
+            const res = await fetch(URL);
+            const data = await res.text();
+            console.log("Datos del Excel listos");
+            // Aquí procesaríamos las filas como en el paso anterior
+        }
+
+        function abrir(seccion) {
+            alert("Abriendo " + seccion + "... Aquí cargaríamos los datos del Excel.");
+        }
+
+        // Foco inicial
+        window.onload = () => document.querySelector('.card').focus();
+    </script>
+</body>
+</html>
