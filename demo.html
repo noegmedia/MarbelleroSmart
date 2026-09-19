@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantalla Informativa Marbella</title>
+  <style>
+    /* DESHABILITAR CUALQUIER INTERACCIÓN DEL USUARIO */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none; /* Evita seleccionar texto */
+      -webkit-user-select: none;
+      pointer-events: none; /* Deshabilita clics, toques y scroll */
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      cursor: none; /* Oculta el puntero del ratón */
+    }
+
+    /* BARRA DE PROGRESO DE 10 SEGUNDOS */
+    .progress-bar-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 1000;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #38bdf8;
+      animation: progress 10s linear infinite;
+    }
+
+    @keyframes progress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    /* CONTENEDOR DE SLIDES */
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem;
+      text-align: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ESTILOS COMUNES DE TÍTULOS */
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* SLIDE 1: NOTICIAS */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .news-card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .news-tag {
+      background: #0284c7;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.8rem;
+      font-weight: bold;
+    }
+
+    .news-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .news-desc {
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+
+    /* SLIDE 2: TIEMPO (5 DÍAS) */
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .weather-card {
+      background: #1e293b;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .weather-icon {
+      font-size: 3rem;
+      margin: 1rem 0;
+    }
+
+    .temp {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #f1f5f9;
+    }
+
+    /* SLIDE 3: CÁMARAS DGT */
+    .dgt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .cam-card {
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+
+    .cam-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cam-label {
+      padding: 0.8rem;
+      font-size: 0.9rem;
+      background: #0f172a;
+      font-weight: 600;
+    }
+
+    /* SLIDE 4: CÓDIGO QR */
+    .qr-container {
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .qr-container img {
+      width: 250px;
+      height: 250px;
+      display: block;
+    }
+
+    .qr-text {
+      font-size: 1.3rem;
+      color: #cbd5e1;
+      max-width: 500px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de progreso superior de 10s -->
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- SLIDE 1: NOTICIAS PRINCIPALES -->
+  <div class="slide active">
+    <h1>Noticias Principales</h1>
+    <div class="news-grid">
+      <div class="news-card">
+        <span class="news-tag">LOCAL</span>
+        <div class="news-title">Mejoras en el paseo marítimo de Marbella</div>
+        <div class="news-desc">Comienzan las obras de remodelación e iluminación eficiente en la costa.</div>
+      </div>
+      <div class="news-card">
+        <span class="news-tag">CULTURA</span>
+        <div class="news-title">Festival de verano confirma cartelera</div>
+        <div class="news-desc">Artistas internacionales visitarán la ciudad durante la próxima temporada.</div>
+      </div>
+      <div class="news-card">
+        <span class="news-tag">INNOVACIÓN</span>
+        <div class="news-title">Nuevos puntos de recarga eléctrica</div>
+        <div class="news-desc">El ayuntamiento despliega 20 nuevos puntos de carga rápida para vehículos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: PRONÓSTICO DEL TIEMPO (MARBELLA 5 DÍAS) -->
+  <div class="slide">
+    <h1>El Tiempo en Marbella (5 días)</h1>
+    <div class="weather-grid">
+      <div class="weather-card">
+        <h3>Hoy</h3>
+        <div class="weather-icon">☀️</div>
+        <div class="temp">24°C</div>
+        <p style="color:#94a3b8;">Soleado</p>
+      </div>
+      <div class="weather-card">
+        <h3>Mañana</h3>
+        <div class="weather-icon">🌤️</div>
+        <div class="temp">23°C</div>
+        <p style="color:#94a3b8;">Parc. Nublado</p>
+      </div>
+      <div class="weather-card">
+        <h3>Jueves</h3>
+        <div class="weather-icon">☀️</div>
+        <div class="temp">26°C</div>
+        <p style="color:#94a3b8;">Despejado</p>
+      </div>
+      <div class="weather-card">
+        <h3>Viernes</h3>
+        <div class="weather-icon">🌧️</div>
+        <div class="temp">20°C</div>
+        <p style="color:#94a3b8;">Lluvia débil</p>
+      </div>
+      <div class="weather-card">
+        <h3>Sábado</h3>
+        <div class="weather-icon">🌤️</div>
+        <div class="temp">22°C</div>
+        <p style="color:#94a3b8;">Nuboso</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: CÁMARAS DGT MARBELLA -->
+  <div class="slide">
+    <h1>Cámaras Tráfico DGT - Marbella</h1>
+    <div class="dgt-grid">
+      <div class="cam-card">
+        <!-- Imagen representativa/estática de cámara de tráfico -->
+        <img src="https://infocar.dgt.es/etraffic/data/camaras/382.jpg" alt="Camara DGT 1" onerror="this.src='https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500&q=80'">
+        <div class="cam-label">A-7 Km 184.5 - Marbella (Entrada Este)</div>
+      </div>
+      <div class="cam-card">
+        <img src="https://infocar.dgt.es/etraffic/data/camaras/383.jpg" alt="Camara DGT 2" onerror="this.src='https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=500&q=80'">
+        <div class="cam-label">A-7 Km 175.0 - Marbella (Puerto Banús)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: CÓDIGO QR -->
+  <div class="slide">
+    <h1>Escanear para más información</h1>
+    <div class="qr-container">
+      <!-- Generador de QR dinámico apuntando a portal de noticias -->
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://www.marbella.es/noticias" alt="Código QR">
+    </div>
+    <div class="qr-text">
+      Apunta con la cámara de tu móvil para acceder al portal completo de noticias y avisos de Marbella.
+    </div>
+  </div>
+
+  <script>
+    // Lógica para rotar las diapositivas cada 10 segundos
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    let currentSlide = 0;
+    const slideInterval = 10000; // 10000 ms = 10 segundos
+
+    function nextSlide() {
+      // Ocultar diapositiva actual
+      slides[currentSlide].classList.remove('active');
+      
+      // Pasar a la siguiente (o volver a la 0 si es la última)
+      currentSlide = (currentSlide + 1) % slides.length;
+      
+      // Mostrar nueva diapositiva
+      slides[currentSlide].classList.add('active');
+
+      // Reiniciar animación de la barra de progreso
+      progressBar.style.animation = 'none';
+      progressBar.offsetHeight; /* provoca un reflow en el DOM */
+      progressBar.style.animation = 'progress 10s linear infinite';
+    }
+
+    // Iniciar temporizador
+    setInterval(nextSlide, slideInterval);
+  </script>
+</body>
+</html>
